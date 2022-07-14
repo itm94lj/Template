@@ -17,6 +17,7 @@ export class SigninComponent implements OnInit {
   constructor(private app: AppService,
               private http: HttpClient,
               private router:Router) {
+    console.log("signin Component constructor");
     this.loginForm = new FormGroup({
       username: new FormControl(''),
       password: new FormControl('')
@@ -32,7 +33,7 @@ export class SigninComponent implements OnInit {
                   username: this.loginForm.value.username,
                   password: this.loginForm.value.password
                 }, ()=> {
-                  this.router.navigateByUrl('/');
+                  this.router.navigateByUrl('/greeting');
                   console.log("app authenticate complete");
                 });
 

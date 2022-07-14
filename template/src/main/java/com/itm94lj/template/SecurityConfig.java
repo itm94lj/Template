@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -26,18 +27,19 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain web(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests()
-                .antMatchers("/", "/user", "/greeting", "/logout").permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .cors(withDefaults())
                 .httpBasic(withDefaults())
+                .authorizeHttpRequests(
+                        (authorize) -> authorize
+                                .mvcMatchers("/", "/user", "/logout").permitAll()
+                                //"/", "/greeting"
+                                .anyRequest().authenticated()
+                )
+                .cors(withDefaults())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 )
                 .csrf()
-                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 ;
 
         return  http.build();
@@ -59,7 +61,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
+    public InMemoryUserDetailsManager userDetailsService() {
         UserDetails user = User.withDefaultPasswordEncoder()
                 .username("itm94lj@163.com")
                 .password("000000")
@@ -67,11 +69,12 @@ public class SecurityConfig {
                 .build();
 
         UserDetails admin = User.withDefaultPasswordEncoder()
-                .username("admin")
+                .username("admin@163.com")
                 .password("000000")
                 .roles("ADMIN", "USER")
                 .build();
 
         return new InMemoryUserDetailsManager(user, admin);
     }
+
 }

@@ -11,18 +11,20 @@ import {Greeting} from "./Greeting";
 export class GreetingComponent implements OnInit {
   title    = "Greeting";
   greeting = {id: 0, content: 'HelloWorld'};
-  greetingUrl = 'http://127.0.0.1:8080/greeting';
+  greetingUrl = 'http://localhost:8080/hello/greeting';
   constructor(private app: AppService, private http: HttpClient) { }
 
   ngOnInit(): void {
-    this.http.get<Greeting>(this.greetingUrl, {withCredentials:true}).subscribe(
+    this.http.get<Greeting>(this.greetingUrl).subscribe(
       (data: Greeting) => {
+        console.log('get greeting data.' + data);
         this.greeting = data;
       }
     );
   }
 
   authenticated() {
+    console.log('current authenticated state:' + this.app.authenticated);
     return this.app.authenticated;
   };
 

@@ -1,8 +1,21 @@
-<style>
-</style>
 
-<div>
-  <h1>Hello</h1>
-  <div>id:{{greeting.id}}</div>
-  <div>content:{{greeting.content}}</div>
+<div class="container">
+  <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+    <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none text-bg-primary">
+    </a>
+
+    <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+      <li><a class="nav-link px-2 link-secondary" routerLinkActive="active" routerLink="/greeting">Greeting</a></li>
+      <li><a class="nav-link px-2 link-secondary" routerLinkActive="active" routerLink="/admingreeting">AdminGreeting</a></li>
+    </ul>
+
+    <div class="col-3 text-end">
+      <a class="btn btn-outline-primary me-2" routerLinkActive="active" routerLink="/signin">Sign in</a>
+      <a class="btn btn-primary" (click)="logout()">Logout</a>
+    </div>
+  </header>
+</div>
+
+<div class="container">
+  <router-outlet></router-outlet>
 </div>

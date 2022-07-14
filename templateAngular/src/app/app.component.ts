@@ -1,26 +1,29 @@
 import { Component } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {Greeting} from "../greeting/Greeting";
+import {AppService} from "./app.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
   title = 'templateAngular';
-  greetingUrl = "http://127.0.0.1:8080/greeting";
   greeting : Greeting;
-  constructor(private  http: HttpClient) {
-    this.greeting = {id: 1, content: "hello"};
-    this.http.get<Greeting>(this.greetingUrl)
-      .subscribe((data: Greeting) => {
-        console.log("http subscribe id:" + data.id + "content:" + data.content);
-          this.greeting = {
-            id: data.id,
-            content: data.content
-          }
-      }
-        );
+  constructor(private  http: HttpClient,
+              private app: AppService,
+              private router: Router) {
+    this.greeting = {id: 0, content: "static hello"};
+  }
+
+  logout() {
+    this.http.get(this.app._logoutUrl, {})
+      .subscribe((response: any) => {
+        this.app.authenticated = false;
+        this.router.navigateByUrl('/login');
+      })
+
   }
 }
