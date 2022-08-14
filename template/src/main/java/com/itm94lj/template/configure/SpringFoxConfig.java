@@ -1,4 +1,4 @@
-package com.itm94lj.template;
+package com.itm94lj.template.configure;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,9 +1,18 @@
-package com.itm94lj.template.signin;
+package com.itm94lj.template.entity.signin;
+
+import org.springframework.data.annotation.Id;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 
 public class User {
-
     private String username;
     private String password;
+
+    public User()
+    {
+    }
 
     public User(String username, String password) {
         this.username = username;
