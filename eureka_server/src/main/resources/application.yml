@@ -1,0 +1,13 @@
+server:
+  port: 8761
+
+spring:
+  application:
+    name: greeting-eureka-server
+
+eureka:
+  instance:
+    hostname: www.eureka.com
+  client:
+    registerWithEureka: false
+    fetchRegistry: false

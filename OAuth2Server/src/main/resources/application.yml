@@ -1,0 +1,16 @@
+server:
+  port: 9000
+
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: http://www.eureka.com:8761/eureka/
+
+spring:
+  application:
+    name: greeting-oauth2-service
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://www.eureka.com:8761/eureka/

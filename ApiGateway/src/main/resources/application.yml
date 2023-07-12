@@ -1,0 +1,57 @@
+server:
+  port: 8777
+  servlet:
+    session:
+      timeout: 3600
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://www.eureka.com:8761/eureka/
+
+spring:
+  application:
+    name: greeting-gateway
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          github:
+#            client-id: d9929816ca1151402943
+#            client-secret: fab3baf211a658d5a6d041b42026a1ddd786f777
+  cloud:
+    gateway:
+      default-filters:
+        - TokenRelay=
+      filter:
+        request-rate-limiter:
+          deny-empty-key: false
+        remove-hop-by-hop:
+          headers:
+            - access-control-allow-origin
+#            - authorization
+#            - access-control-allow-credentials
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedHeaders: "*"
+            allowedMethods: "*"
+            maxAge: 3628800
+
+#      routes:
+#        - id: greeting_server
+#          uri: http://localhost:8080
+#          predicates:
+#            - Path=/**
+#          filters:
+#            - name: RequestRateLimiter
+#              args:
+#                key-resolver: "#{@myKeyRsolver}"
+#                redis-rate-limiter.replenishRate:  1
+#                redis-rate-limiter.burstCapacity:  2
+#                redis-rate-limiter.requestedToken: 1
+
+logging:
+  level:
+    org.springframework.security: DEBUG
