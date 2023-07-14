@@ -1,4 +1,4 @@
-package com.itm94lj.OAuth2Server;
+package com.itm94lj.OAuth2Server.Controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

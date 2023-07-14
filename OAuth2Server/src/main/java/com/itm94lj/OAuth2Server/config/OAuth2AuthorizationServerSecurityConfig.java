@@ -1,4 +1,4 @@
-package com.itm94lj.OAuth2Server;
+package com.itm94lj.OAuth2Server.config;
 
 
 import com.nimbusds.jose.jwk.JWKSet;
@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
@@ -36,6 +37,8 @@ import org.springframework.security.oauth2.server.authorization.settings.Authori
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -51,14 +54,31 @@ public class OAuth2AuthorizationServerSecurityConfig {
     @Bean
     @Order(1)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(req->req
-                .requestMatchers("http://www.eureka.com:8761/**")
-                .permitAll());
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
                 .oidc(Customizer.withDefaults());
 
-        return http.formLogin(Customizer.withDefaults()).build();
+        return http.formLogin(
+                        form -> form
+                                .loginPage("/customLogin")
+                                .loginProcessingUrl("/login")
+                                .permitAll()
+        )
+                .csrf(csrf->csrf.disable())
+                .build();
+    }
+
+    @Bean
+    @Order(2)
+    public SecurityFilterChain standardSecurityFilterChain(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+                .formLogin(
+                    Customizer.withDefaults()
+                )
+                .csrf(csrf->csrf.disable())
+        ;
+
+        return http.build();
     }
 
     private GrantedAuthoritiesMapper userAuthoritiesMapper() {
@@ -88,16 +108,6 @@ public class OAuth2AuthorizationServerSecurityConfig {
 
             return mappedAuthorities;
         };
-    }
-
-    @Bean
-    @Order(2)
-    public SecurityFilterChain standardSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((authorize) -> authorize
-                .anyRequest().authenticated())
-                .formLogin(Customizer.withDefaults());
-
-        return http.build();
     }
 
     @Bean
