@@ -51,6 +51,8 @@ import java.util.*;
 
 @Configuration
 public class OAuth2AuthorizationServerSecurityConfig {
+
+    private static final String CUSTOM_CONSENT_PAGE_URI = "/oauth2/consent";
     @Bean
     @Order(1)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -59,10 +61,14 @@ public class OAuth2AuthorizationServerSecurityConfig {
                         req
                                 .requestMatchers("http://www.oauth2.com:9000/greeting-oauth2-service/oauth2/authorize").permitAll()
                                 .requestMatchers("http://www.oauth2.com:9000/greeting-oauth2-service/customLogin").permitAll()
+                                .requestMatchers("http://www.oauth2.com:9000/greeting-oauth2-service/oauth2/consent").permitAll()
                 ) ;
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-                .oidc(Customizer.withDefaults());
+                .authorizationEndpoint( end ->
+                        end.consentPage(CUSTOM_CONSENT_PAGE_URI))
+                .oidc(Customizer.withDefaults())
+                ;
 
         return http
                 .exceptionHandling( exceptions -> exceptions
@@ -134,7 +140,7 @@ public class OAuth2AuthorizationServerSecurityConfig {
                 .redirectUri("http://www.gateway.com:8777/authorized")
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
-//                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
                 .build();
 
         RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())

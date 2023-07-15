@@ -11,6 +11,7 @@ public class LoginConfig  implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/myLogin").setViewName("myLogin.html");
+        registry.addViewController("consent").setViewName("consent.html");
     }
 
 

@@ -44,7 +44,8 @@ public class SecurityConfiguration {
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder, TokenRelayGatewayFilterFactory filterFactory) {
         return builder.routes()
                 .route(r -> r.path("/greeting-service/**")
-                        .filters(f -> f.requestRateLimiter(c -> c.setRateLimiter(redisRateLimiter())
+                        .filters(f -> f.requestRateLimiter(c -> c
+//                                        .setRateLimiter(redisRateLimiter())
                                 .setKeyResolver(userKeyResolver()))
                                 .filters(filterFactory.apply())
                                 .removeRequestHeader("Cookie")
