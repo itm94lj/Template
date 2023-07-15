@@ -1,5 +1,7 @@
 server:
   port: 8666
+  servlet:
+    context-path: /greeting-service/
 
 spring-doc:
   swagger-ui:
@@ -12,7 +14,7 @@ spring:
     oauth2:
       resource-server:
         jwt:
-          jwk-set-uri: http://www.oauth2.com:9000/oauth2/jwks
+          jwk-set-uri: http://www.oauth2.com:9000/greeting-oauth2-service/oauth2/jwks
 
 eureka:
   client:

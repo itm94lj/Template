@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class CustomLoginController {
     @GetMapping("/customLogin")
     public String customLogin(Model model, HttpServletRequest request) {
-//        CsrfToken token = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
-//        model.addAttribute(token.getParameterName(), token.getToken());
-//        System.out.println("customLogin token:["+token.getParameterName()+"] value:p"
-//        +token.getToken()+"]");
+        CsrfToken token = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
+        model.addAttribute(token.getParameterName(), token.getToken());
+        System.out.println("customLogin token:["+token.getParameterName()+"] value:p"
+        +token.getToken()+"]");
         return "myLogin";
     }
 }

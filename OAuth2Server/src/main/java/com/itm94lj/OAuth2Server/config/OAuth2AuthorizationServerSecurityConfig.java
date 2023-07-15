@@ -39,15 +39,15 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Configuration
 public class OAuth2AuthorizationServerSecurityConfig {
@@ -57,8 +57,8 @@ public class OAuth2AuthorizationServerSecurityConfig {
         http
                 .authorizeHttpRequests(req ->
                         req
-                                .requestMatchers("http://www.oauth2.com:9000/oauth2/authorize").permitAll()
-                                .requestMatchers("http://www.oauth2.com:9000/customLogin").permitAll()
+                                .requestMatchers("http://www.oauth2.com:9000/greeting-oauth2-service/oauth2/authorize").permitAll()
+                                .requestMatchers("http://www.oauth2.com:9000/greeting-oauth2-service/customLogin").permitAll()
                 ) ;
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
@@ -70,7 +70,7 @@ public class OAuth2AuthorizationServerSecurityConfig {
                                 new LoginUrlAuthenticationEntryPoint("/customLogin"),
                                 new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
                         ))
-                .csrf(csrf->csrf.disable())
+                .csrf(Customizer.withDefaults())
                 .build();
     }
 
@@ -78,6 +78,8 @@ public class OAuth2AuthorizationServerSecurityConfig {
     @Order(2)
     public SecurityFilterChain standardSecurityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/**.css").permitAll()
+                        .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(
                         form -> form
@@ -85,7 +87,7 @@ public class OAuth2AuthorizationServerSecurityConfig {
                                 .loginProcessingUrl("/login")
                                 .permitAll()
                 )
-                .csrf(csrf->csrf.disable())
+                .csrf(Customizer.withDefaults())
         ;
 
         return http.build();
@@ -201,6 +203,19 @@ public class OAuth2AuthorizationServerSecurityConfig {
         }
 
         return keyPair;
+   }
+
+   @Bean
+   CorsConfigurationSource corsConfigurationSource() {
+       CorsConfiguration configuration = new CorsConfiguration();
+       configuration.setAllowedOrigins(Arrays.asList("*"));
+       configuration.setAllowedMethods(Arrays.asList("*"));
+       configuration.setAllowedHeaders(Arrays.asList("*"));
+
+       UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+       source.registerCorsConfiguration("/**", configuration);
+
+       return source;
    }
 
 }
