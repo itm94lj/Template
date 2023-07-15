@@ -54,16 +54,22 @@ public class OAuth2AuthorizationServerSecurityConfig {
     @Bean
     @Order(1)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests(req ->
+                        req
+                                .requestMatchers("http://www.oauth2.com:9000/oauth2/authorize").permitAll()
+                                .requestMatchers("http://www.oauth2.com:9000/customLogin").permitAll()
+                ) ;
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
                 .oidc(Customizer.withDefaults());
 
-        return http.formLogin(
-                        form -> form
-                                .loginPage("/customLogin")
-                                .loginProcessingUrl("/login")
-                                .permitAll()
-        )
+        return http
+                .exceptionHandling( exceptions -> exceptions
+                        .defaultAuthenticationEntryPointFor(
+                                new LoginUrlAuthenticationEntryPoint("/customLogin"),
+                                new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
+                        ))
                 .csrf(csrf->csrf.disable())
                 .build();
     }
@@ -71,9 +77,13 @@ public class OAuth2AuthorizationServerSecurityConfig {
     @Bean
     @Order(2)
     public SecurityFilterChain standardSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
+        http.authorizeHttpRequests(auth -> auth
+                        .anyRequest().authenticated())
                 .formLogin(
-                    Customizer.withDefaults()
+                        form -> form
+                                .loginPage("/customLogin")
+                                .loginProcessingUrl("/login")
+                                .permitAll()
                 )
                 .csrf(csrf->csrf.disable())
         ;
@@ -99,10 +109,8 @@ public class OAuth2AuthorizationServerSecurityConfig {
                     OAuth2UserAuthority oauth2UserAuthority = (OAuth2UserAuthority)authority;
 
                     Map<String, Object> userAttributes = oauth2UserAuthority.getAttributes();
-
                     // Map the attributes found in userAttributes
                     // to one or more GrantedAuthority's and add it to mappedAuthorities
-
                 }
             });
 

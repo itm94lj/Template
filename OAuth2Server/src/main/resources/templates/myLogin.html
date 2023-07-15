@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -12,8 +11,8 @@
 </head>
 <body>
     <div class="container">
-        <form class="form-signin" method="post" action="/login">
-            <h2 class="form-signin-heading">Please sign in</h2>
+        <form class="form-signin" method="post" action="http://www.oauth2.com:9000/login">
+            <h2 class="form-signin-heading">custom sign in</h2>
             <p>
                 <label for="username" class="sr-only">Username</label>
                 <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
@@ -22,7 +21,7 @@
                 <label for="password" class="sr-only">Password</label>
                 <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
             </p>
-            <input th::name="_csrf" type="hidden" th::value="${_csrf}"/>
+            <input name="_csrf" type="hidden" th:value="${_csrf}"/>
             <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
         </form>
     </div>
