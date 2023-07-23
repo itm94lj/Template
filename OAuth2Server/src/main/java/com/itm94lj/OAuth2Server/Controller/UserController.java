@@ -8,8 +8,9 @@ import java.security.Principal;
 @RestController
 public class UserController {
 
-    @RequestMapping("/user")
+    @RequestMapping("/userinfo")
     public Principal user(Principal user) {
+        System.out.println("userinfo invoked.");
         return user;
     }
 }

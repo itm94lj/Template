@@ -62,6 +62,8 @@ public class OAuth2AuthorizationServerSecurityConfig {
                                 .requestMatchers("http://www.oauth2.com:9000/greeting-oauth2-service/oauth2/authorize").permitAll()
                                 .requestMatchers("http://www.oauth2.com:9000/greeting-oauth2-service/customLogin").permitAll()
                                 .requestMatchers("http://www.oauth2.com:9000/greeting-oauth2-service/oauth2/consent").permitAll()
+                                .requestMatchers("http://www.oauth2.com:9000/greeting-oauth2-service/userinfo").permitAll()
+                                .requestMatchers("/greeting-oauth2-service/userinfo").permitAll()
                 ) ;
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
@@ -77,6 +79,7 @@ public class OAuth2AuthorizationServerSecurityConfig {
                                 new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
                         ))
                 .csrf(Customizer.withDefaults())
+                .cors(Customizer.withDefaults())
                 .build();
     }
 
@@ -86,6 +89,8 @@ public class OAuth2AuthorizationServerSecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                         .requestMatchers("/**.css").permitAll()
                         .requestMatchers("/**").permitAll()
+                        .requestMatchers("/**userinfo").permitAll()
+                        .requestMatchers("http://www.oauth2.com:9000/greeting-oauth2-service/userinfo").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(
                         form -> form
@@ -94,6 +99,7 @@ public class OAuth2AuthorizationServerSecurityConfig {
                                 .permitAll()
                 )
                 .csrf(Customizer.withDefaults())
+                .cors(Customizer.withDefaults())
         ;
 
         return http.build();
@@ -138,6 +144,7 @@ public class OAuth2AuthorizationServerSecurityConfig {
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .redirectUri("http://www.gateway.com:8777/login/oauth2/code/login-client")
                 .redirectUri("http://www.gateway.com:8777/authorized")
+                .redirectUri("http://localhost:4200")
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
@@ -179,7 +186,7 @@ public class OAuth2AuthorizationServerSecurityConfig {
    @Bean
     public AuthorizationServerSettings providerSettings() {
         return AuthorizationServerSettings.builder()
-                .issuer("http://www.oauth2.com:9000")
+                .issuer("http://www.oauth2.com:9000/greeting-oauth2-service/")
                 .build();
    }
 
