@@ -80,6 +80,7 @@ public class OAuth2AuthorizationServerSecurityConfig {
                         ))
                 .csrf(Customizer.withDefaults())
                 .cors(Customizer.withDefaults())
+                .oauth2ResourceServer(res -> res.jwt(Customizer.withDefaults()))
                 .build();
     }
 
@@ -100,6 +101,7 @@ public class OAuth2AuthorizationServerSecurityConfig {
                 )
                 .csrf(Customizer.withDefaults())
                 .cors(Customizer.withDefaults())
+                .oauth2ResourceServer(res -> res.jwt(Customizer.withDefaults()))
         ;
 
         return http.build();
