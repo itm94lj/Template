@@ -1,0 +1,17 @@
+<div class="container-fluid d-grid align-items-center greeting-edit-height">
+  <form class="row mx-auto" [formGroup]="personForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3 row">
+      <label for="greetId" class="col-sm-2 col-form-label">Name</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" id="greetId" formControlName="name">
+      </div>
+    </div>
+    <div class="mb-3 row">
+      <label for="greetContent" class="col-sm-2 col-form-label">Address</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" id="greetContent" formControlName="address">
+      </div>
+    </div>
+    <button class="btn btn-primary col-6 mx-auto" type="submit">Submit</button>
+  </form>
+</div>

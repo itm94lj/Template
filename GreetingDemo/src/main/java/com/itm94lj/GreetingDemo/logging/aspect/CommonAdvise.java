@@ -24,34 +24,41 @@ public class CommonAdvise {
     @Around("com.itm94lj.GreetingDemo.logging.aspect.CommonPointcuts.controllerInvoke()")
     public Object doControllerLogging(ProceedingJoinPoint pjp) throws Throwable{
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
+        Object    retVal;
 
-        Signature signature = pjp.getSignature();
-        MethodSignature methodSignature = (MethodSignature) signature;
-        Method targetMethod = methodSignature.getMethod();
+        if (null != attributes) {
+            HttpServletRequest request = attributes.getRequest();
 
-        Object[] objects = pjp.getArgs();
-        List<Object> logArgs = Arrays.stream(objects)
-                .filter( arg -> (!(arg instanceof HttpServletRequest) && !(arg instanceof HttpServletResponse)))
-                .collect(Collectors.toList());
+            Signature signature = pjp.getSignature();
+            MethodSignature methodSignature = (MethodSignature) signature;
+            Method targetMethod = methodSignature.getMethod();
 
-        long       start = System.nanoTime();
-        Object    retVal = pjp.proceed();
-        long      finish = System.nanoTime();
-        double    timeElapsed = (double)(finish - start)/ 1_000_000.0;
+            Object[] objects = pjp.getArgs();
+            List<Object> logArgs = Arrays.stream(objects)
+                    .filter( arg -> (!(arg instanceof HttpServletRequest) && !(arg instanceof HttpServletResponse)))
+                    .collect(Collectors.toList());
 
-        StringBuilder sb = new StringBuilder(1000);
+            long       start = System.nanoTime();
+            retVal = pjp.proceed();
+            long      finish = System.nanoTime();
+            double    timeElapsed = (double)(finish - start)/ 1_000_000.0;
 
-        sb.append("================================================================================\n");
-        sb.append("Controller:").append(targetMethod.getDeclaringClass().getName()).append("\n");
-        sb.append("Method    :").append(targetMethod.getName()).append("\n");
-        sb.append("Params    :").append(JSON.toJSONString(logArgs)).append("\n");
-        sb.append("URI       :").append(request.getRequestURI()).append("\n");
-        sb.append("URL       :").append(request.getRequestURL()).append("\n");
-        sb.append("Return    :").append(JSON.toJSONString(retVal)).append("\n");
-        sb.append("Cost      :").append(timeElapsed).append(" milliseconds\n");
-        sb.append("================================================================================\n");
-        System.out.println(sb);
+            StringBuilder sb = new StringBuilder(1000);
+
+            sb.append("================================================================================\n");
+            sb.append("Controller:").append(targetMethod.getDeclaringClass().getName()).append("\n");
+            sb.append("Method    :").append(targetMethod.getName()).append("\n");
+            sb.append("Params    :").append(JSON.toJSONString(logArgs)).append("\n");
+            sb.append("URI       :").append(request.getRequestURI()).append("\n");
+            sb.append("URL       :").append(request.getRequestURL()).append("\n");
+            sb.append("Return    :").append(JSON.toJSONString(retVal)).append("\n");
+            sb.append("Cost      :").append(timeElapsed).append(" milliseconds\n");
+            sb.append("================================================================================\n");
+            System.out.println(sb);
+        } else {
+            retVal = pjp.proceed();
+        }
+
 
         return retVal;
     }

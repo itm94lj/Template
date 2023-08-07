@@ -3,13 +3,20 @@ server:
   servlet:
     context-path: /greeting-service/
 
-spring-doc:
-  swagger-ui:
-    path: /swagger-ui.html
+#spring-doc:
+#  swagger-ui:
+#    path: /swagger-ui.html
 
 spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
   application:
     name: greeting-service
+  datasource:
+    url: jdbc:mysql://localhost/greeting
+    username: root
+    password: cy12345678
   security:
     oauth2:
       resource-server:

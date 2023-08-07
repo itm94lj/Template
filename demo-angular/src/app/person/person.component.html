@@ -1,0 +1,25 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="person-list col-3">
+      <div class="d-flex">
+        <h3 class="text-primary p-2 flex-grow-1">Person Lists</h3>
+        <div class="btn-group p-2" role="group" aria-label="Basic example">
+          <a class="btn btn-success" role="button" routerLink="../editperson">New</a>
+        </div>
+      </div>
+
+      <ol class="list-group list-group-numbered bg-secondary">
+        <li *ngFor="let person of (persons$ | async)! | paginate: {id: 'server', itemsPerPage: itemsPerPage, currentPage: p, totalItems: total}" class="list-group-item" [class.active]="person == selectedPerson"
+            (click)="onSelect(person)">
+          {{person.name}}
+        </li>
+      </ol>
+      <div>
+        <div class="spinner" [ngClass]="{'hidden': !loading}"></div>
+        <pagination-controls (pageChange)="getPage($event)" id="server"></pagination-controls>
+      </div>
+    </div>
+
+    <app-person-details [person]="selectedPerson" class="col-9"></app-person-details>
+  </div>
+</div>

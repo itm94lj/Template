@@ -16,5 +16,6 @@ export const authCodeFlowConfig: AuthConfig = <AuthConfig>{
   skipIssuerCheck: true,
   strictDiscoveryDocumentValidation: false,
   clearHashAfterLogin: true,
-  useHttpBasicAuth: true
+  useHttpBasicAuth: true,
+  oidc: true
 };

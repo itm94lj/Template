@@ -16,3 +16,7 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://www.eureka.com:8761/eureka/
+
+logging:
+  level:
+    org.springframework.security: DEBUG

@@ -2,22 +2,31 @@ import { Injectable } from '@angular/core';
 import {Greeting} from "../entity/Greeting";
 import {HttpClient, HttpHeaders} from '@angular/common/http'
 import {AuthenticateService} from "./authenticate.service";
+import {GREETINGS} from "../mock/greeting_mock";
+import {of} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class GreetingServiceService {
-  greetingUrl = 'http://localhost:8777/greeting';
+  greetingUrl = 'http://localhost:4200/greeting-service/greeting';
   iCount=0;
+  greetings = GREETINGS;
 
-  constructor(private http: HttpClient, private authService: AuthenticateService) { }
+  constructor(private http: HttpClient) { }
 
   getGreeting() {
-    // const headers =  new HttpHeaders().set('X-Auth-Token', this.authService.token);
-    const headers = new HttpHeaders( { authorization: 'Basic ' + btoa('itm94lj' + ':' +'password') ,
-      'Cache-Control': 'no-cache'} );
     this.iCount = this.iCount + 1;
-    // +'?iCount='+this.iCount
-    return this.http.get<Greeting>(this.greetingUrl+'?iCount='+this.iCount, {headers: headers});
+    return this.http.get<Greeting>(this.greetingUrl+'?iCount='+this.iCount);
+  }
+
+  getGreetings() {
+    const greetings = of(this.greetings);
+
+    return greetings;
+  }
+
+  addGreeting(newGreet: Greeting) {
+    this.greetings.push(newGreet);
   }
 }

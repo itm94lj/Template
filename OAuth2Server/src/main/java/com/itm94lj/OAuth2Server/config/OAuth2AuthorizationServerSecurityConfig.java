@@ -6,6 +6,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,8 +34,11 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
+import org.springframework.security.oauth2.server.authorization.oidc.authentication.OidcUserInfoAuthenticationContext;
+import org.springframework.security.oauth2.server.authorization.oidc.authentication.OidcUserInfoAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
@@ -48,6 +52,7 @@ import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.*;
+import java.util.function.Function;
 
 @Configuration
 public class OAuth2AuthorizationServerSecurityConfig {
@@ -62,10 +67,17 @@ public class OAuth2AuthorizationServerSecurityConfig {
                                 .requestMatchers("http://www.oauth2.com:9000/greeting-oauth2-service/oauth2/authorize").permitAll()
                                 .requestMatchers("http://www.oauth2.com:9000/greeting-oauth2-service/customLogin").permitAll()
                                 .requestMatchers("http://www.oauth2.com:9000/greeting-oauth2-service/oauth2/consent").permitAll()
-                                .requestMatchers("http://www.oauth2.com:9000/greeting-oauth2-service/userinfo").permitAll()
-                                .requestMatchers("/greeting-oauth2-service/userinfo").permitAll()
+                                .requestMatchers("http://www.oauth2.com:9000/greeting-oauth2-service/.well-known/**").permitAll()
                 ) ;
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+
+        Function<OidcUserInfoAuthenticationContext, OidcUserInfo> userInfoMapper = (context) -> {
+            OidcUserInfoAuthenticationToken authentication = context.getAuthentication();
+            JwtAuthenticationToken principal = (JwtAuthenticationToken) authentication.getPrincipal();
+
+            return new OidcUserInfo(principal.getToken().getClaims());
+        };
+
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
                 .authorizationEndpoint( end ->
                         end.consentPage(CUSTOM_CONSENT_PAGE_URI))
@@ -73,6 +85,7 @@ public class OAuth2AuthorizationServerSecurityConfig {
                 ;
 
         return http
+//                .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
                 .exceptionHandling( exceptions -> exceptions
                         .defaultAuthenticationEntryPointFor(
                                 new LoginUrlAuthenticationEntryPoint("/customLogin"),
@@ -80,7 +93,7 @@ public class OAuth2AuthorizationServerSecurityConfig {
                         ))
                 .csrf(Customizer.withDefaults())
                 .cors(Customizer.withDefaults())
-                .oauth2ResourceServer(res -> res.jwt(Customizer.withDefaults()))
+//                .oauth2ResourceServer(res -> res.jwt(Customizer.withDefaults()))
                 .build();
     }
 
@@ -90,8 +103,6 @@ public class OAuth2AuthorizationServerSecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                         .requestMatchers("/**.css").permitAll()
                         .requestMatchers("/**").permitAll()
-                        .requestMatchers("/**userinfo").permitAll()
-                        .requestMatchers("http://www.oauth2.com:9000/greeting-oauth2-service/userinfo").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(
                         form -> form
@@ -101,7 +112,7 @@ public class OAuth2AuthorizationServerSecurityConfig {
                 )
                 .csrf(Customizer.withDefaults())
                 .cors(Customizer.withDefaults())
-                .oauth2ResourceServer(res -> res.jwt(Customizer.withDefaults()))
+//                .oauth2ResourceServer(res -> res.jwt(Customizer.withDefaults()))
         ;
 
         return http.build();
@@ -149,7 +160,7 @@ public class OAuth2AuthorizationServerSecurityConfig {
                 .redirectUri("http://localhost:4200")
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
-                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+//                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
                 .build();
 
         RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
@@ -232,5 +243,4 @@ public class OAuth2AuthorizationServerSecurityConfig {
 
        return source;
    }
-
 }

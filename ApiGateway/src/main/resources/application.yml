@@ -21,8 +21,8 @@ spring:
 #            client-secret: fab3baf211a658d5a6d041b42026a1ddd786f777
   cloud:
     gateway:
-      default-filters:
-        - TokenRelay=
+#      default-filters:
+#        - TokenRelay=
       filter:
         request-rate-limiter:
           deny-empty-key: false
@@ -36,7 +36,10 @@ spring:
           '[/**]':
             allowedOrigins: "*"
             allowedHeaders: "*"
-            allowedMethods: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - OPTIONS
             maxAge: 3628800
 
 #      routes:
@@ -54,4 +57,5 @@ spring:
 
 logging:
   level:
+    org.springframework: DEBUG
     org.springframework.security: DEBUG

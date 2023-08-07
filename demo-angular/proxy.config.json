@@ -1,0 +1,10 @@
+{
+  "/greeting-service": {
+    "target": "http://www.gateway.com:8777",
+    "secure": false
+  },
+  "/greeting-oauth2-service": {
+    "target": "http://www.oauth2.com:9000",
+    "secure": false
+  }
+}

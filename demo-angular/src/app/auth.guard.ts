@@ -1,18 +1,16 @@
 import {CanActivateFn, Router} from '@angular/router';
 import {Injectable, inject} from "@angular/core";
 import {OAuthService} from "angular-oauth2-oidc";
+import {AuthenticateService} from "../service/authenticate.service";
 
 export const authGuard: CanActivateFn = (route, state) => {
-  const oauth2 = inject(OAuthService);
+  const authService = inject(AuthenticateService);
   const router = inject(Router);
-  console.log('authGuard invoked.');
-  if (oauth2.hasValidAccessToken() &&
-      oauth2.hasValidIdToken()) {
-    console.log('auth pass.');
+  if (authService.access_token &&
+      authService.access_token.length > 0) {
     return true;
   } else {
-    console.log('auth no pass, redirect to /signin');
-    router.navigate(['/signin', {login: true}]);
+    authService.loginCode();
     return false;
   }
 };

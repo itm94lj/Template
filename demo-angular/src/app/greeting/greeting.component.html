@@ -1,1 +1,24 @@
-<p>greeting works!</p>
+<div class="container-fluid">
+  <div class="row">
+    <div class="greeint-list col-3">
+      <div class="d-flex">
+        <h3 class="text-primary p-2 flex-grow-1">Greeting Lists</h3>
+        <div class="btn-group p-2" role="group" aria-label="Basic example">
+          <a class="btn btn-success" role="button" routerLink="../editgreet">New</a>
+        </div>
+      </div>
+
+      <input type="text" #criteria  class="form-control" id="search" placeholder="Search Greetings"
+      (input)="updateCriteria(criteria.value)">
+
+      <ol [@filerAnimation]="greetingsTotal"  class="list-group list-group-numbered bg-secondary" >
+        <li  *ngFor="let greeting of filteredGreetings" class="list-group-item" [class.active]="greeting == selectedGreeting"
+            (click)="onSelect(greeting)">
+          {{greeting.content}}
+        </li>
+      </ol>
+    </div>
+
+    <app-greeting-details [greeting]="selectedGreeting" class="col-9"></app-greeting-details>
+  </div>
+</div>

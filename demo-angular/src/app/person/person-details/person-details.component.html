@@ -1,0 +1,5 @@
+<div *ngIf="(person$ | async)">
+  <p>Person   Id: {{(person$ | async)?.id}}</p>
+  <p>Person Name: {{(person$ | async)?.name}}</p>
+  <p>Person Addr: {{(person$ | async)?.address}}</p>
+</div>
