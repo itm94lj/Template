@@ -1,0 +1,16 @@
+<nav class="navbar navbar-default">
+  <ul class="nav navbar-nav">
+    <li><a [routerLink]="['/signin']">Sign in</a></li>
+    <li><a [routerLink]="['/greet']">Greeting</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+  <div class="row">
+    <router-outlet></router-outlet>
+  </div>
+
+  <div class="row">
+    <router-outlet name="aux"></router-outlet>
+  </div>
+</div>

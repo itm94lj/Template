@@ -7,15 +7,7 @@ import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
-import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.oauth2.client.registration.*;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.core.oidc.OidcScopes;
-import org.springframework.security.web.server.SecurityWebFilterChain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,19 +37,24 @@ public class SecurityConfiguration {
 
     @Bean
     RedisRateLimiter redisRateLimiter() {
-        return new RedisRateLimiter(1,2);
+        return new RedisRateLimiter(1000,2000);
     }
 
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder, TokenRelayGatewayFilterFactory filterFactory) {
         return builder.routes()
-                .route(r -> r.path("/greeting**")
-                        .filters(f -> f.requestRateLimiter(c -> c.setRateLimiter(redisRateLimiter())
+                .route(r -> r.path("/greeting-service/**")
+                        .filters(f -> f.requestRateLimiter(c -> c
+//                                        .setRateLimiter(redisRateLimiter())
                                 .setKeyResolver(userKeyResolver()))
                                 .filters(filterFactory.apply())
                                 .removeRequestHeader("Cookie")
                         )
                         .uri("lb://greeting-service"))
+                .route(r -> r.path("/greeting-oauth2-service/**")
+                        .filters(f -> f.filters(filterFactory.apply()))
+                        .uri("lb://greeting-oauth2-service")
+                )
                 .build();
     }
 //

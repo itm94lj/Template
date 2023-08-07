@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @SpringBootApplication
 public class ApiGatewayApplication {
 
-	@GetMapping("/user")
+	@GetMapping("/userinfo")
 	public OAuth2User getUser(@AuthenticationPrincipal OAuth2User oAuth2User) {
 		return oAuth2User;
 	}

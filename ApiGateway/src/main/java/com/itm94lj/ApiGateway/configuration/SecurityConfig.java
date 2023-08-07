@@ -26,9 +26,9 @@ public class SecurityConfig {
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .redirectUri("http://www.gateway.com:8777/login/oauth2/code/login-client")
                 .scope("openid", "profile")
-                .authorizationUri("http://www.oauth2.com:9000/oauth2/authorize")
-                .tokenUri("http://www.oauth2.com:9000/oauth2/token")
-                .jwkSetUri("http://www.oauth2.com:9000/oauth2/jwks")
+                .authorizationUri("http://www.oauth2.com:9000/greeting-oauth2-service/oauth2/authorize")
+                .tokenUri("http://www.oauth2.com:9000/greeting-oauth2-service/oauth2/token")
+                .jwkSetUri("http://www.oauth2.com:9000/greeting-oauth2-service/oauth2/jwks")
                 .build();
 
     }
